@@ -1,0 +1,14 @@
+# IDE specific files
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Build artifacts
+target/
+
+# Log files
+*.log
+
+# Maven wrapper
+.mvn/wrapper/maven-wrapper.jar
