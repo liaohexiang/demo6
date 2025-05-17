@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>SSE消息接收端</title>
+</head>
+<body>
+    <h1>服务器消息实时接收</h1>
+    <div id="message-container" style="border: 1px solid #ccc; padding: 20px; margin: 20px;">
+        <p>等待服务器消息...</p>
+    </div>
+
+    <script>
+        let eventSource;
+        const connectSSE = () => {
+            eventSource = new EventSource('/sse');
+
+            // 连接打开时的处理
+            eventSource.onopen = (event) => {
+                console.log('SSE连接已建立');
+                document.getElementById('message-container').innerHTML += 
+                    `<p>${new Date().toLocaleString()} - 连接已建立</p>`;
+            };
+
+            // 接收消息处理
+            eventSource.onmessage = (event) => {
+                const container = document.getElementById('message-container');
+                container.innerHTML += 
+                    `<p>${new Date().toLocaleString()} - 收到消息: ${event.data}</p>`;
+                container.scrollTop = container.scrollHeight;
+            };
+
+            // 错误处理
+            eventSource.onerror = (error) => {
+                console.error('SSE错误:', error);
+                eventSource.close();
+                document.getElementById('message-container').innerHTML += 
+                    `<p style="color: red">${new Date().toLocaleString()} - 连接已断开，尝试在3秒后重连...</p>`;
+                setTimeout(connectSSE, 3000);
+            };
+        };
+
+        // 初始化连接
+        connectSSE();
+    </script>
+</body>
+</html>
