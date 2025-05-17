@@ -25,12 +25,16 @@ public class SseController {
                 emitter.completeWithError(e);
             }
         }, 0, 1, TimeUnit.SECONDS);
-
         emitter.onCompletion(() -> {
             future.cancel(true);
             executor.shutdownNow();
         });
-
+        // 超时处理
+        emitter.onTimeout(() -> {
+            emitter.complete();
+            future.cancel(true);
+            executor.shutdownNow();
+        });
         return emitter;
     }
 }
